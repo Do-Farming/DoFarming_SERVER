@@ -30,6 +30,9 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "image", nullable = false)
+    private String image;
+
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
@@ -41,18 +44,28 @@ public class User implements UserDetails {
     private Integer age;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "mood", nullable = false)
+    private Mood mood;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
 
     public void update(FirebaseToken token) {
         this.firebaseUid = token.getUid();
         this.email = token.getEmail();
+        this.image = token.getPicture();
     }
 
     public User updateUser(String nickname, Gender gender, Integer age) {
         this.nickname = nickname;
         this.gender = gender;
         this.age = age;
+        return this;
+    }
+
+    public User updateMood(Mood mood) {
+        this.mood = mood;
         return this;
     }
 
@@ -91,12 +104,14 @@ public class User implements UserDetails {
     }
 
     @Builder
-    public User(String firebaseUid, String email, String nickname, Gender gender, Integer age, Role role) {
+    public User(String firebaseUid, String email, String image, String nickname, Gender gender, Integer age, Mood mood, Role role) {
         this.firebaseUid = firebaseUid;
         this.email = email;
+        this.image = image;
         this.nickname = nickname;
         this.gender = gender;
         this.age = age;
+        this.mood = mood;
         this.role = role;
     }
 
