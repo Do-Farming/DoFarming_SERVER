@@ -49,12 +49,20 @@ public class TrackController {
     }
 
     @DeleteMapping("/{trackId}")
-    public ResponseEntity<Void> deleteTrack(@AuthenticationPrincipal User user,
-                                            @PathVariable(value = "trackId") Long trackId){
-        trackService.delete(trackId, user);
+    public ResponseEntity<Void> deleteTrack(@PathVariable(value = "trackId") Long trackId){
+        if(trackId == null) {
+            return ResponseEntity.badRequest().build(); // 클라이언트가 유효하지 않은 요청을 보냈을 경우 400 Bad Request 응답을 반환
+        }
 
-        return ResponseEntity.noContent().build();
+        boolean deleted = trackService.delete(trackId);
+
+        if(deleted) {
+            return ResponseEntity.noContent().build(); // 트랙이 성공적으로 삭제되었을 경우 204 No Content 응답을 반환
+        } else {
+            return ResponseEntity.notFound().build(); // 해당 ID에 해당하는 트랙을 찾을 수 없을 경우 404 Not Found 응답을 반환
+        }
     }
+
 
     @DeleteMapping
     public ResponseEntity<Void> deleteAllTrack(@AuthenticationPrincipal User user){
